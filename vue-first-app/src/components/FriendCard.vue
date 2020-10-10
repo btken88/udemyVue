@@ -1,32 +1,58 @@
 <template>
   <li>
-    <h2>{{ friend.name }}</h2>
+    <h2>{{ name }} {{ isFavorite ? "(Favorite)" : "" }}</h2>
     <button @click="toggleDetails">
       {{ detailsAreVisible ? "Hide" : "Show" }} Details
     </button>
+    <button @click="toggleFavorite">
+      {{ isFavorite ? "Remove" : "Add" }} Favorite
+    </button>
     <ul v-if="detailsAreVisible">
-      <li><strong>Phone:</strong> {{ friend.phone }}</li>
-      <li><strong>Email:</strong> {{ friend.email }}</li>
+      <li><strong>Phone:</strong> {{ phoneNumber }}</li>
+      <li><strong>Email:</strong> {{ emailAddress }}</li>
     </ul>
+    <button @click="deleteFriend">Delete</button>
   </li>
 </template>
 
 <script>
 export default {
+  // props: ["name", "emailAddress", "phoneNumber", "isFavorite"],
+  props: {
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+    emailAddress: { type: String, required: true },
+    isFavorite: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  emits: ["toggle-favorite", "delete-friend"],
+  // emits: {
+  //   "toggle-favorite": function(id) {
+  //     if (id) return true;
+  //     else {
+  //       console.warn("ID is missing!!!");
+  //       return false;
+  //     }
+  //   },
+  // },
   data() {
     return {
       detailsAreVisible: false,
-      friend: {
-        id: "josh",
-        name: "Josh Larson",
-        phone: "123-456-7890",
-        email: "josh@email.com",
-      },
     };
   },
   methods: {
     toggleDetails() {
       this.detailsAreVisible = !this.detailsAreVisible;
+    },
+    toggleFavorite() {
+      this.$emit("toggle-favorite", this.id);
+    },
+    deleteFriend() {
+      this.$emit("delete-friend", this.id);
     },
   },
 };
